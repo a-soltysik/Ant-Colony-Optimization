@@ -51,16 +51,7 @@ int main()
             edges[i] = new Edge[CITIES_NUMBER];
         }
 
-        char flag;
-        read >> flag;
-        if (flag == '-')
-        {
-            edges = read_points(read, edges);
-        }
-        else
-        {
-            edges = read_distances(read, edges);
-        }
+        edges = read_points(read, edges);
 
         for (int i = 0; i < CITIES_NUMBER; i++)
         {

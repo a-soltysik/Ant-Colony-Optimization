@@ -25,26 +25,6 @@ Edge **read_points(std::istream &read, Edge **edges)
     return edges;
 }
 
-Edge **read_distances(std::istream &read, Edge **edges)
-{
-    double length;
-    for (int i = 0; i < CITIES_NUMBER; i++)
-    {
-        for (int j = 0; j < CITIES_NUMBER; j++)
-        {
-            if (i == 0 && j == 0)
-            {
-                edges[i][j].length() = 0;
-                continue;
-            }
-            read >> length;
-            edges[i][j].length() = length;
-        }
-        read.ignore();
-    }
-    return edges;
-}
-
 std::string time_to_string(long microseconds)
 {
     std::cout << microseconds;

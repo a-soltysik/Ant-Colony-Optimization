@@ -6,8 +6,6 @@
 
 Edge** read_points(std::istream& read, Edge **edges);
 
-Edge** read_distances(std::istream& read, Edge** edges);
-
 std::string time_to_string(long microseconds);
 
 std::string path_to_string(std::vector<int> path);
