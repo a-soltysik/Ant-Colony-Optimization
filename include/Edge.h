@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Ant.h"
+
 #include <cmath>
 
 class Edge {

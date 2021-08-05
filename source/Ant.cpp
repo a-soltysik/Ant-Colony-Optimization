@@ -1,5 +1,4 @@
 #include "Ant.h"
-#include "constants.h"
 
 Ant::Ant(size_t index) : ant_index(index)
 {

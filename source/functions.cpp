@@ -1,8 +1,6 @@
-#include <cmath>
-#include <iostream>
-#include <string>
 #include "functions.h"
-#include "constants.h"
+
+#include <iostream>
 
 void readPoints(std::ifstream &read, std::vector<std::vector<Edge>>& edges)
 {

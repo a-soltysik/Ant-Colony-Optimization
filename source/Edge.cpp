@@ -1,6 +1,5 @@
 #include "Edge.h"
-#include "Ant.h"
-#include "constants.h"
+
 #include <algorithm>
 
 void Edge::antPassed(const Ant& ant) {

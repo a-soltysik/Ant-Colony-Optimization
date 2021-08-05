@@ -1,6 +1,7 @@
 #pragma once
-#include <fstream>
 #include "Edge.h"
+
+#include <fstream>
 
 void readPoints(std::ifstream& read, std::vector<std::vector<Edge>>& edges);
 

@@ -1,11 +1,6 @@
-#include <iostream>
-#include <fstream>
-#include <chrono>
-#include <cmath>
-#include <vector>
-#include <string>
-
 #include "functions.h"
+
+#include <chrono>
 
 void resetAnts(std::vector<Ant>& ants);
 
@@ -16,9 +11,6 @@ void localUpdate(std::vector<std::vector<Edge>>& edges);
 void globalUpdate(std::vector<std::vector<Edge>>& edges);
 
 int main() {
-
-    std::vector<uint32_t> shortestPath;
-
     std::ifstream read;
     std::ofstream write;
 
@@ -26,30 +18,27 @@ int main() {
             CITIES_NUMBER,
             std::vector<Edge>(CITIES_NUMBER, Edge())
     );
+    std::vector<double> pathLengthsOfAll(ITERATION_NUMBER, 0.0);
+    std::vector<size_t> shortestPath;
 
-    double eta;
-    double* history;
-
-    uint32_t experiments;
+    uint32_t experimentsNumber;
     bool isNumbersOnly, isGlobalUpdate, isLocalUpdate;
 
-    get_user_input(experiments, isNumbersOnly, isGlobalUpdate, isLocalUpdate);
+    get_user_input(experimentsNumber, isNumbersOnly, isGlobalUpdate, isLocalUpdate);
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    for (uint32_t experiment = 0; experiment < experiments; experiment++) {
+    for (uint32_t experimentIndex = 0; experimentIndex < experimentsNumber; experimentIndex++) {
         //reading from the input file
-        read.open("../in/in" + std::to_string(experiment + 1) + ".ant");
+        read.open("../in/in" + std::to_string(experimentIndex + 1) + ".ant");
 
         setParameters(read);
-
         readPoints(read, edges);
 
         for (auto& line : edges) {
             for (auto& edge : line) {
                 edge.setPheromone(TAU0);
-                eta = 1 / static_cast<double>(edge.getLength());
-                edge.setEta(eta);
+                edge.setEta(1 / static_cast<double>(edge.getLength()));
             }
         }
 
@@ -59,24 +48,17 @@ int main() {
         for (size_t i = 0; i < ANTS_NUMBER; i++) {
             ants.emplace_back(i);
         }
-        history = new double[ITERATION_NUMBER];
-
-        for (size_t i = 0; i < ITERATION_NUMBER; i++) {
-            history[i] = 0;
-        }
 
         read.close();
 
         //Writing the output to the output file
-        write.open("../out/out" + std::to_string(experiment + 1) + ".ant", std::ofstream::out | std::ofstream::trunc);
+        write.open("../out/out" + std::to_string(experimentIndex + 1) + ".ant", std::ofstream::out | std::ofstream::trunc);
 
-        double min = 1000000000;
+        double min = std::numeric_limits<double>::max();
 
         for (size_t iteration = 0; iteration < ITERATION_NUMBER; iteration++) {
             resetAnts(ants);
-
             resetEdges(edges);
-
             //main loop
             for (size_t step = 0; step < CITIES_NUMBER - 1; step++) {
                 //Resetting the number of ants on edges
@@ -88,12 +70,10 @@ int main() {
                 for (auto& ant : ants) {
                     //setting new positions for ants
                     size_t new_position = position(ant, ant.getPosition(), edges);
-
                     if (isLocalUpdate) {
                         edges[ant.getPosition()][new_position].passed();
                         edges[new_position][ant.getPosition()].passed();
                     }
-
                     if (isGlobalUpdate) {
                         edges[new_position][ant.getPosition()].antPassed(ant);
                         edges[ant.getPosition()][new_position].antPassed(ant);
@@ -125,9 +105,9 @@ int main() {
 
             //saving paths of ants
             for (auto& ant : ants) {
-                history[iteration] += ant.getPathLength();
+                pathLengthsOfAll[iteration] += ant.getPathLength();
             }
-            history[iteration] /= ANTS_NUMBER;
+            pathLengthsOfAll[iteration] /= ANTS_NUMBER;
         }
 
         write << "\nThe length of the shortest path: " << min << "\n";
@@ -138,12 +118,7 @@ int main() {
 
         write << "Time: " << time_to_string(duration.count());
         write.close();
-
-        //Clearing memory
-
-        delete[] history;
     }
-
     return 0;
 }
 

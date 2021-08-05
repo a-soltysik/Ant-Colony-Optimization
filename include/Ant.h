@@ -1,6 +1,7 @@
 #pragma once
-#include <vector>
 #include "constants.h"
+
+#include <vector>
 
 class Ant
 {
