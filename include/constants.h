@@ -1,11 +1,11 @@
 #pragma once
 
-size_t CITIES_NUMBER;
-size_t ANTS_NUMBER;
-size_t ITERATION_NUMBER;
-double TAU0;
-double ALPHA;
-double BETA;
-double Q0;
-double RHO;
+extern size_t CITIES_NUMBER;
+extern size_t ANTS_NUMBER;
+extern size_t ITERATION_NUMBER;
+extern double TAU0;
+extern double ALPHA;
+extern double BETA;
+extern double Q0;
+extern double RHO;
 
