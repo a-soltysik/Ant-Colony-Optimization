@@ -1,67 +1,28 @@
-#include <vector>
 #include "Ant.h"
 #include "constants.h"
 
-Ant::Ant()
+Ant::Ant(size_t index) : ant_index(index)
 {
-    is_visited_ = new bool[CITIES_NUMBER];
+    is_visited.reserve(CITIES_NUMBER);
+    city_order.reserve(CITIES_NUMBER);
 }
 
-int Ant::city_order(int index)
-{
-    return city_order_[index];
+void Ant::setPosition(uint32_t position) {
+    this->position = position;
+    visit(position);
 }
 
-const std::vector<int> &Ant::city_order() const 
+void Ant::visit(uint32_t position)
 {
-    return city_order_;
-}
-
-void Ant::extend_path(double length)
-{
-    path_ += length;
-}
-
-double Ant::path_length()
-{
-    return path_;
-}
-
-int &Ant::position()
-{
-    return position_;
-}
-
-const int &Ant::position() const
-{
-    return position_;
-}
-
-int &Ant::index()
-{
-    return index_;
-}
-const int &Ant::index() const
-{
-    return index_;
-}
-
-void Ant::set_visited(int position)
-{
-    is_visited_[position] = true;
-    city_order_.push_back(position);
-}
-
-bool Ant::is_visited(int position)
-{
-    return is_visited_[position];
+    is_visited[position] = true;
+    city_order.push_back(position);
 }
 
 bool Ant::has_ended()
 {
     for (int i = 0; i < CITIES_NUMBER; ++i)
     {
-        if (!is_visited_[i])
+        if (!is_visited[i])
             return false;
     }
     return true;
@@ -71,13 +32,8 @@ void Ant::clear()
 {
     for (int i = 0; i < CITIES_NUMBER; ++i)
     {
-        is_visited_[i] = false;
+        is_visited[i] = false;
     }
-    city_order_.clear();
-    path_ = 0;
-}
-
-void Ant::erase()
-{
-    delete[] is_visited_;
+    city_order.clear();
+    path_length = 0;
 }

@@ -22,7 +22,7 @@ void globalUpdate(Edge **edges);
 int main()
 {
 
-    std::vector<int> shortestPath;
+    std::vector<uint32_t> shortestPath;
 
     std::ifstream read;
     std::ofstream write;
@@ -64,15 +64,12 @@ int main()
             }
         }
 
-        std::vector<Ant> ants(ANTS_NUMBER);
+        std::vector<Ant> ants;
+        ants.reserve(ANTS_NUMBER);
 
-        int index = 0;
-        for (auto &ant : ants)
-        {
-            ant.index() = index;
-            index++;
+        for (size_t i = 0; i < ANTS_NUMBER; i++) {
+            ants.emplace_back(i);
         }
-
         history = new double[ITERATION_NUMBER];
 
         for (int i = 0; i < ITERATION_NUMBER; ++i)
@@ -107,38 +104,37 @@ int main()
                 for (auto &ant : ants)
                 {
                     //setting new positions for ants
-                    int new_position = position(ant, ant.position(), edges);
+                    size_t new_position = position(ant, ant.getPosition(), edges);
 
                     if (localUpdate_)
                     {
-                        edges[ant.position()][new_position].passed();
-                        edges[new_position][ant.position()].passed();
+                        edges[ant.getPosition()][new_position].passed();
+                        edges[new_position][ant.getPosition()].passed();
                     }
 
                     if (globalUpdate_)
                     {
-                        edges[new_position][ant.position()].ant_passed(ant);
-                        edges[ant.position()][new_position].ant_passed(ant);
+                        edges[new_position][ant.getPosition()].ant_passed(ant);
+                        edges[ant.getPosition()][new_position].ant_passed(ant);
                     }
 
-                    ant.extend_path(edges[ant.position()][new_position].length());
-                    ant.set_visited(new_position);
-                    ant.position() = new_position;
+                    ant.extendPath(edges[ant.getPosition()][new_position].length());
+                    ant.setPosition(new_position);
 
                     if (ant.has_ended())
                     {
                         if (!numbersOnly_)
                         {
-                            write << "The path of the ant " << ant.index() << ": [";
-                            write << path_to_string(ant.city_order()) << ". ";
-                            write << "The length of the path: " << ant.path_length() << "\n";
+                            write << "The path of the ant " << ant.getIndex() << ": [";
+                            write << path_to_string(ant.getCityOrder()) << ". ";
+                            write << "The length of the path: " << ant.getPathLength() << "\n";
                         }
                         else if (numbersOnly_)
-                            write << ant.path_length() << "\n";
-                        if (ant.path_length() < min)
+                            write << ant.getPathLength() << "\n";
+                        if (ant.getPathLength() < min)
                         {
-                            min = ant.path_length();
-                            shortestPath = ant.city_order();
+                            min = ant.getPathLength();
+                            shortestPath = ant.getCityOrder();
                         }
                     }
                 }
@@ -155,7 +151,7 @@ int main()
             //saving paths of ants
             for (auto &ant : ants)
             {
-                history[iteration] += ant.path_length();
+                history[iteration] += ant.getPathLength();
             }
             history[iteration] /= ANTS_NUMBER;
         }
@@ -170,10 +166,6 @@ int main()
         write.close();
 
         //Clearing memory
-        for (auto &ant : ants)
-        {
-            ant.erase();
-        }
 
         for (int i = 0; i < CITIES_NUMBER; ++i)
         {
@@ -193,8 +185,7 @@ void resetAnts(std::vector<Ant> &ants)
     for (auto &ant : ants)
     {
         ant.clear();
-        ant.position() = rand() % CITIES_NUMBER;
-        ant.set_visited(ant.position());
+        ant.setPosition(rand() % CITIES_NUMBER);
     }
 }
 

@@ -1,40 +1,34 @@
-#ifndef MROWKI_ANT_H
-#define MROWKI_ANT_H
-
+#pragma once
 #include <vector>
 
 class Ant
 {
 private:
-    std::vector<int> city_order_;
-    double path_ = 0;
-    int position_;
-    int index_;
-    bool *is_visited_;
+    std::vector<size_t> city_order;
+    double path_length = 0;
+    uint32_t position = 0;
+    const size_t ant_index;
+    std::vector<bool> is_visited;
+
+    void visit(uint32_t position);
 
 public:
-    Ant();
+    Ant(size_t index);
+    ~Ant() = default;
+    Ant& operator=(const Ant& ant) = delete;
 
-    int city_order(int index);
-    const std::vector<int> &city_order() const;
+    std::vector<size_t> getCityOrder() const {return city_order;}
 
-    void extend_path(double length);
-    double path_length();
+    void extendPath(double length) {path_length += length;};
+    double getPathLength() const {return path_length;};
 
-    int &position();
-    const int &position() const;
+    uint32_t getPosition() const {return position;}
+    void setPosition(uint32_t position);
 
-    int &index();
-    const int &index() const;
-
-    void set_visited(int position);
-    bool is_visited(int position);
+    size_t getIndex() const {return ant_index;}
+    bool isVisited(uint32_t position) const {return is_visited[position];}
 
     bool has_ended();
 
     void clear();
-
-    void erase();
 };
-
-#endif //MROWKI_ANT_H

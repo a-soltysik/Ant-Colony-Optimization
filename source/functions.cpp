@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "Edge.h"
 #include "functions.h"
 #include "constants.h"
 
@@ -58,7 +57,7 @@ std::string time_to_string(long microseconds)
     return time;
 }
 
-std::string path_to_string(std::vector<int> path)
+std::string path_to_string(const std::vector<uint32_t>& path)
 {
     std::string result = "[";
     for (int i = 0; i < path.size(); i++)
@@ -88,14 +87,14 @@ double probability(Ant ant, int r, int s, Edge **edges)
     double denominator = 0;
     for (int i = 0; i < CITIES_NUMBER; ++i)
     {
-        if (!ant.is_visited(i))
+        if (!ant.isVisited(i))
             denominator += edges[r][i].numerator();
     }
 
     return numerator / denominator;
 }
 
-int position(Ant ant, int r, Edge **edges)
+int position(const Ant& ant, uint32_t r, Edge **edges)
 {
     double q = (double)(rand() % 10001) / 10000;
     double max = 0;
@@ -104,7 +103,7 @@ int position(Ant ant, int r, Edge **edges)
     {
         for (int i = 0; i < CITIES_NUMBER; ++i)
         {
-            if (r != i && edges[r][i].numerator() > max && !ant.is_visited(i))
+            if (r != i && edges[r][i].numerator() > max && !ant.isVisited(i))
             {
                 max = edges[r][i].numerator();
                 edge_max = i;
@@ -122,7 +121,7 @@ int position(Ant ant, int r, Edge **edges)
         q = (double)(rand() % 10001) / 10000;
         for (int i = 0; i < CITIES_NUMBER; ++i)
         {
-            if (!ant.is_visited(i))
+            if (!ant.isVisited(i))
             {
                 sum += probability(ant, r, i, edges);
                 last = i;
