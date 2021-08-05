@@ -1,13 +1,11 @@
-#ifndef MROWKI_CONSTANTS_H
-#define MROWKI_CONSTANTS_H
+#pragma once
 
-extern int CITIES_NUMBER;
-extern int ANTS_NUMBER;
-extern int ITERATION_NUMBER;
-extern double TAU0;
-extern double ALPHA;
-extern double BETA;
-extern double Q0;
-extern double RHO;
+size_t CITIES_NUMBER;
+size_t ANTS_NUMBER;
+size_t ITERATION_NUMBER;
+double TAU0;
+double ALPHA;
+double BETA;
+double Q0;
+double RHO;
 
-#endif //MROWKI_CONSTANTS_H
