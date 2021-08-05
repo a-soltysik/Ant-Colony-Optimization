@@ -28,7 +28,7 @@ public:
     size_t getIndex() const {return ant_index;}
     bool isVisited(uint32_t position) const {return is_visited[position];}
 
-    bool has_ended();
+    bool hasEnded();
 
     void clear();
 };

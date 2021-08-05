@@ -121,7 +121,7 @@ int main()
                     ant.extendPath(edges[ant.getPosition()][new_position].length());
                     ant.setPosition(new_position);
 
-                    if (ant.has_ended())
+                    if (ant.hasEnded())
                     {
                         if (!numbersOnly_)
                         {

@@ -18,7 +18,7 @@ void Ant::visit(uint32_t position)
     city_order.push_back(position);
 }
 
-bool Ant::has_ended()
+bool Ant::hasEnded()
 {
     for (int i = 0; i < CITIES_NUMBER; ++i)
     {
