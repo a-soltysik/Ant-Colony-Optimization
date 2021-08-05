@@ -2,14 +2,10 @@
 #include <fstream>
 #include <chrono>
 #include <cmath>
-#include <cctype>
 #include <vector>
 #include <string>
 
-#include "Edge.h"
-#include "Ant.h"
 #include "functions.h"
-#include "constants.h"
 
 void resetAnts(std::vector<Ant>& ants);
 
@@ -34,16 +30,16 @@ int main() {
     double eta;
     double* history;
 
-    int experiments;
-    bool numbersOnly_, globalUpdate_, localUpdate_;
+    uint32_t experiments;
+    bool isNumbersOnly, isGlobalUpdate, isLocalUpdate;
 
-    get_user_input(experiments, numbersOnly_, globalUpdate_, localUpdate_);
+    get_user_input(experiments, isNumbersOnly, isGlobalUpdate, isLocalUpdate);
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    for (int expetiment = 0; expetiment < experiments; ++expetiment) {
+    for (uint32_t experiment = 0; experiment < experiments; experiment++) {
         //reading from the input file
-        read.open("../in/in" + std::to_string(expetiment + 1) + ".ant");
+        read.open("../in/in" + std::to_string(experiment + 1) + ".ant");
 
         setParameters(read);
 
@@ -65,27 +61,27 @@ int main() {
         }
         history = new double[ITERATION_NUMBER];
 
-        for (int i = 0; i < ITERATION_NUMBER; ++i) {
+        for (size_t i = 0; i < ITERATION_NUMBER; i++) {
             history[i] = 0;
         }
 
         read.close();
 
         //Writing the output to the output file
-        write.open("../out/out" + std::to_string(expetiment + 1) + ".ant", std::ofstream::out | std::ofstream::trunc);
+        write.open("../out/out" + std::to_string(experiment + 1) + ".ant", std::ofstream::out | std::ofstream::trunc);
 
         double min = 1000000000;
 
-        for (int iteration = 0; iteration < ITERATION_NUMBER; ++iteration) {
+        for (size_t iteration = 0; iteration < ITERATION_NUMBER; iteration++) {
             resetAnts(ants);
 
             resetEdges(edges);
 
             //main loop
-            for (int step = 0; step < CITIES_NUMBER - 1; ++step) {
+            for (size_t step = 0; step < CITIES_NUMBER - 1; step++) {
                 //Resetting the number of ants on edges
-                for (int i = 0; i < CITIES_NUMBER; ++i) {
-                    for (int j = 0; j < CITIES_NUMBER; ++j) {
+                for (size_t i = 0; i < CITIES_NUMBER; i++) {
+                    for (size_t j = 0; j < CITIES_NUMBER; j++) {
                         edges[i][j].clearPassed();
                     }
                 }
@@ -93,12 +89,12 @@ int main() {
                     //setting new positions for ants
                     size_t new_position = position(ant, ant.getPosition(), edges);
 
-                    if (localUpdate_) {
+                    if (isLocalUpdate) {
                         edges[ant.getPosition()][new_position].passed();
                         edges[new_position][ant.getPosition()].passed();
                     }
 
-                    if (globalUpdate_) {
+                    if (isGlobalUpdate) {
                         edges[new_position][ant.getPosition()].antPassed(ant);
                         edges[ant.getPosition()][new_position].antPassed(ant);
                     }
@@ -107,11 +103,11 @@ int main() {
                     ant.setPosition(new_position);
 
                     if (ant.hasEnded()) {
-                        if (!numbersOnly_) {
+                        if (!isNumbersOnly) {
                             write << "The path of the ant " << ant.getIndex() << ": [";
                             write << path_to_string(ant.getCityOrder()) << ". ";
                             write << "The length of the path: " << ant.getPathLength() << "\n";
-                        } else if (numbersOnly_)
+                        } else
                             write << ant.getPathLength() << "\n";
                         if (ant.getPathLength() < min) {
                             min = ant.getPathLength();
@@ -119,11 +115,11 @@ int main() {
                         }
                     }
                 }
-                if (localUpdate_) {
+                if (isLocalUpdate) {
                     localUpdate(edges);
                 }
             }
-            if (globalUpdate_) {
+            if (isGlobalUpdate) {
                 globalUpdate(edges);
             }
 

@@ -1,4 +1,6 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
 
 extern size_t CITIES_NUMBER;
 extern size_t ANTS_NUMBER;

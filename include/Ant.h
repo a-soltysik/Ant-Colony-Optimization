@@ -1,16 +1,17 @@
 #pragma once
 #include <vector>
+#include "constants.h"
 
 class Ant
 {
 private:
-    std::vector<size_t> city_order;
+    std::vector<std::size_t> city_order;
     double path_length = 0;
-    size_t position = 0;
-    const size_t ant_index;
+    std::size_t position = 0;
+    const std::size_t ant_index;
     std::vector<bool> is_visited;
 
-    void visit(size_t position);
+    void visit(std::size_t position);
 
 public:
     Ant(size_t index);

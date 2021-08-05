@@ -1,18 +1,16 @@
 #pragma once
 
 #include "Ant.h"
-#include "constants.h"
 #include <cmath>
-
 
 class Edge {
 private:
     std::vector<Ant> ants;
-    double eta;
-    double numerator;
-    double pheromone;
-    double length;
-    int already_passed = 0;
+    double eta = 0.0;
+    double numerator = 0.0;
+    double pheromone = 0.0;
+    double length = 0.0;
+    uint32_t already_passed = 0;
 
     bool contains(const Ant& ant);
 
