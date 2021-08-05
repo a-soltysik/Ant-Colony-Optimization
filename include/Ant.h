@@ -10,7 +10,7 @@ private:
     const size_t ant_index;
     std::vector<bool> is_visited;
 
-    void visit(uint32_t position);
+    void visit(size_t position);
 
 public:
     Ant(size_t index);
