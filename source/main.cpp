@@ -11,26 +11,28 @@
 #include "functions.h"
 #include "constants.h"
 
-void resetAnts(std::vector<Ant> &ants);
+void resetAnts(std::vector<Ant>& ants);
 
-void resetEdges(Edge **edges);
+void resetEdges(std::vector<std::vector<Edge>>& edges);
 
-void localUpdate(Edge **edges);
+void localUpdate(std::vector<std::vector<Edge>>& edges);
 
-void globalUpdate(Edge **edges);
+void globalUpdate(std::vector<std::vector<Edge>>& edges);
 
-int main()
-{
+int main() {
 
     std::vector<uint32_t> shortestPath;
 
     std::ifstream read;
     std::ofstream write;
 
-    Edge **edges;
+    std::vector<std::vector<Edge>> edges(
+            CITIES_NUMBER,
+            std::vector<Edge>(CITIES_NUMBER, Edge())
+    );
 
     double eta;
-    double *history;
+    double* history;
 
     int experiments;
     bool numbersOnly_, globalUpdate_, localUpdate_;
@@ -39,28 +41,19 @@ int main()
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    for (int expetiment = 0; expetiment < experiments; ++expetiment)
-    {
+    for (int expetiment = 0; expetiment < experiments; ++expetiment) {
         //reading from the input file
         read.open("../in/in" + std::to_string(expetiment + 1) + ".ant");
 
         setParameters(read);
 
-        edges = new Edge *[CITIES_NUMBER];
-        for (int i = 0; i < CITIES_NUMBER; i++)
-        {
-            edges[i] = new Edge[CITIES_NUMBER];
-        }
+        readPoints(read, edges);
 
-        edges = read_points(read, edges);
-
-        for (int i = 0; i < CITIES_NUMBER; i++)
-        {
-            for (int j = 0; j < CITIES_NUMBER; j++)
-            {
-                edges[i][j].pheromone() = TAU0;
-                eta = (double)1 / edges[i][j].length();
-                edges[i][j].eta() = eta;
+        for (auto& line : edges) {
+            for (auto& edge : line) {
+                edge.setPheromone(TAU0);
+                eta = 1 / static_cast<double>(edge.getLength());
+                edge.setEta(eta);
             }
         }
 
@@ -72,8 +65,7 @@ int main()
         }
         history = new double[ITERATION_NUMBER];
 
-        for (int i = 0; i < ITERATION_NUMBER; ++i)
-        {
+        for (int i = 0; i < ITERATION_NUMBER; ++i) {
             history[i] = 0;
         }
 
@@ -84,73 +76,59 @@ int main()
 
         double min = 1000000000;
 
-        for (int iteration = 0; iteration < ITERATION_NUMBER; ++iteration)
-        {
+        for (int iteration = 0; iteration < ITERATION_NUMBER; ++iteration) {
             resetAnts(ants);
 
             resetEdges(edges);
 
             //main loop
-            for (int step = 0; step < CITIES_NUMBER - 1; ++step)
-            {
+            for (int step = 0; step < CITIES_NUMBER - 1; ++step) {
                 //Resetting the number of ants on edges
-                for (int i = 0; i < CITIES_NUMBER; ++i)
-                {
-                    for (int j = 0; j < CITIES_NUMBER; ++j)
-                    {
-                        edges[i][j].clear_passed();
+                for (int i = 0; i < CITIES_NUMBER; ++i) {
+                    for (int j = 0; j < CITIES_NUMBER; ++j) {
+                        edges[i][j].clearPassed();
                     }
                 }
-                for (auto &ant : ants)
-                {
+                for (auto& ant : ants) {
                     //setting new positions for ants
                     size_t new_position = position(ant, ant.getPosition(), edges);
 
-                    if (localUpdate_)
-                    {
+                    if (localUpdate_) {
                         edges[ant.getPosition()][new_position].passed();
                         edges[new_position][ant.getPosition()].passed();
                     }
 
-                    if (globalUpdate_)
-                    {
-                        edges[new_position][ant.getPosition()].ant_passed(ant);
-                        edges[ant.getPosition()][new_position].ant_passed(ant);
+                    if (globalUpdate_) {
+                        edges[new_position][ant.getPosition()].antPassed(ant);
+                        edges[ant.getPosition()][new_position].antPassed(ant);
                     }
 
-                    ant.extendPath(edges[ant.getPosition()][new_position].length());
+                    ant.extendPath(edges[ant.getPosition()][new_position].getLength());
                     ant.setPosition(new_position);
 
-                    if (ant.hasEnded())
-                    {
-                        if (!numbersOnly_)
-                        {
+                    if (ant.hasEnded()) {
+                        if (!numbersOnly_) {
                             write << "The path of the ant " << ant.getIndex() << ": [";
                             write << path_to_string(ant.getCityOrder()) << ". ";
                             write << "The length of the path: " << ant.getPathLength() << "\n";
-                        }
-                        else if (numbersOnly_)
+                        } else if (numbersOnly_)
                             write << ant.getPathLength() << "\n";
-                        if (ant.getPathLength() < min)
-                        {
+                        if (ant.getPathLength() < min) {
                             min = ant.getPathLength();
                             shortestPath = ant.getCityOrder();
                         }
                     }
                 }
-                if (localUpdate_)
-                {
+                if (localUpdate_) {
                     localUpdate(edges);
                 }
             }
-            if (globalUpdate_)
-            {
+            if (globalUpdate_) {
                 globalUpdate(edges);
             }
 
             //saving paths of ants
-            for (auto &ant : ants)
-            {
+            for (auto& ant : ants) {
                 history[iteration] += ant.getPathLength();
             }
             history[iteration] /= ANTS_NUMBER;
@@ -167,59 +145,42 @@ int main()
 
         //Clearing memory
 
-        for (int i = 0; i < CITIES_NUMBER; ++i)
-        {
-            delete[] edges[i];
-        }
-
-        delete[] edges;
-
         delete[] history;
     }
 
     return 0;
 }
 
-void resetAnts(std::vector<Ant> &ants)
-{
-    for (auto &ant : ants)
-    {
+void resetAnts(std::vector<Ant>& ants) {
+    for (auto& ant : ants) {
         ant.clear();
         ant.setPosition(rand() % CITIES_NUMBER);
     }
 }
 
-void resetEdges(Edge **edges)
-{
-    for (int i = 0; i < CITIES_NUMBER; i++)
-    {
-        for (int j = 0; j < CITIES_NUMBER; j++)
-        {
-            edges[i][j].clear();
+void resetEdges(std::vector<std::vector<Edge>>& edges) {
+    for (auto& line : edges) {
+        for (auto& edge : line) {
+            if (edge.getPheromone() > pow(10, -100))
+                edge.clear();
         }
     }
 }
 
-void localUpdate(Edge **edges)
-{
-    for (int i = 0; i < CITIES_NUMBER; ++i)
-    {
-        for (int j = 0; j < CITIES_NUMBER; ++j)
-        {
-            if (edges[i][j].pheromone() > pow(10, -100))
-                edges[i][j].pheromone_update();
+void localUpdate(std::vector<std::vector<Edge>>& edges) {
+    for (auto& line : edges) {
+        for (auto& edge : line) {
+            if (edge.getPheromone() > pow(10, -100))
+                edge.pheromoneUpdate();
         }
     }
 }
 
-void globalUpdate(Edge **edges)
-{
-    for (int i = 0; i < CITIES_NUMBER; ++i)
-    {
-        for (int j = 0; j < CITIES_NUMBER; ++j)
-        {
-            if (edges[i][j].pheromone() > pow(10, -100))
-                edges[i][j].global_pheromone_update();
+void globalUpdate(std::vector<std::vector<Edge>>& edges) {
+    for (auto& line : edges) {
+        for (auto& edge : line) {
+            if (edge.getPheromone() > pow(10, -100))
+                edge.globalPheromoneUpdate();
         }
     }
 }

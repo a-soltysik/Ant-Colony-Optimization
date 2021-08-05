@@ -6,23 +6,19 @@
 #include "functions.h"
 #include "constants.h"
 
-Edge **read_points(std::istream &read, Edge **edges)
+void readPoints(std::istream &read, std::vector<std::vector<Edge>>& edges)
 {
     skip_lines(read, 2);
-    double *x = new double[CITIES_NUMBER];
-    double *y = new double[CITIES_NUMBER];
+    std::vector<double> x(CITIES_NUMBER, 0.0);
+    std::vector<double> y(CITIES_NUMBER, 0.0);
     for (int i = 0; i < CITIES_NUMBER; ++i)
     {
         read >> x[i] >> y[i];
         read.ignore();
     }
-    for (int i = 0; i < CITIES_NUMBER; ++i)
-        for (int j = 0; j < CITIES_NUMBER; ++j)
-            edges[i][j].length() = distance(x[i], y[i], x[j], y[j]);
-
-    delete[] x;
-    delete[] y;
-    return edges;
+    for (size_t i = 0; i < CITIES_NUMBER; ++i)
+        for (size_t j = 0; j < CITIES_NUMBER; ++j)
+            edges[i][j].setLength(distance(x[i], y[i], x[j], y[j]));
 }
 
 std::string time_to_string(long microseconds)
@@ -80,32 +76,32 @@ double distance(double x1, double y1, double x2, double y2)
     return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
 
-double probability(Ant ant, int r, int s, Edge **edges)
+double probability(const Ant& ant, uint32_t r, uint32_t s, std::vector<std::vector<Edge>>& edges)
 {
 
-    double numerator = edges[r][s].numerator();
+    double numerator = edges[r][s].getNumerator();
     double denominator = 0;
     for (int i = 0; i < CITIES_NUMBER; ++i)
     {
         if (!ant.isVisited(i))
-            denominator += edges[r][i].numerator();
+            denominator += edges[r][i].getNumerator();
     }
 
     return numerator / denominator;
 }
 
-int position(const Ant& ant, uint32_t r, Edge **edges)
+uint32_t position(const Ant& ant, uint32_t r, std::vector<std::vector<Edge>>& edges)
 {
     double q = (double)(rand() % 10001) / 10000;
     double max = 0;
     int edge_max;
     if (q <= Q0)
     {
-        for (int i = 0; i < CITIES_NUMBER; ++i)
+        for (size_t i = 0; i < CITIES_NUMBER; ++i)
         {
-            if (r != i && edges[r][i].numerator() > max && !ant.isVisited(i))
+            if (r != i && edges[r][i].getNumerator() > max && !ant.isVisited(i))
             {
-                max = edges[r][i].numerator();
+                max = edges[r][i].getNumerator();
                 edge_max = i;
             }
         }
@@ -119,7 +115,7 @@ int position(const Ant& ant, uint32_t r, Edge **edges)
         double sum = 0;
         int last;
         q = (double)(rand() % 10001) / 10000;
-        for (int i = 0; i < CITIES_NUMBER; ++i)
+        for (size_t i = 0; i < CITIES_NUMBER; ++i)
         {
             if (!ant.isVisited(i))
             {
@@ -131,6 +127,7 @@ int position(const Ant& ant, uint32_t r, Edge **edges)
         }
         return last;
     }
+    return 0;
 }
 
 bool enoughFiles(int amount)

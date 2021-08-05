@@ -2,7 +2,7 @@
 #include <istream>
 #include "Edge.h"
 
-Edge** read_points(std::istream& read, Edge **edges);
+void readPoints(std::istream& read, std::vector<std::vector<Edge>>& edges);
 
 std::string time_to_string(long microseconds);
 
@@ -12,7 +12,7 @@ double distance(double x1, double y1, double x2, double y2);
 
 double probability(Ant ant, int r, int s, Edge** edges);
 
-int position(const Ant& ant, uint32_t r, Edge** edges);
+uint32_t position(const Ant& ant, uint32_t r, std::vector<std::vector<Edge>>& edges);
 
 bool enoughFiles(int amount);
 

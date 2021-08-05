@@ -1,86 +1,39 @@
-#include <cmath>
-#include <iostream>
 #include "Edge.h"
 #include "Ant.h"
 #include "constants.h"
+#include <algorithm>
 
-void Edge::ant_passed(Ant ant)
-{
-    if (!contains(ant))
-    {
-        ants_.push_back(ant);
+void Edge::antPassed(const Ant& ant) {
+    if (!contains(ant)) {
+        ants.push_back(ant);
     }
 }
 
-double &Edge::eta()
-{
-    return eta_;
-}
-
-void Edge::set_numerator()
-{
-    numerator_ = pheromone_ * pow(eta_, BETA);
-}
-
-double &Edge::numerator()
-{
+double Edge::getNumerator() {
     set_numerator();
-    return numerator_;
+    return numerator;
 }
 
-double &Edge::pheromone()
-{
-    return pheromone_;
-}
-const double &Edge::pheromone() const
-{
-    return pheromone_;
-}
-
-void Edge::pheromone_update()
-{
-    pheromone_ = (1 - RHO) * pheromone_ + RHO * already_passed_ * TAU0;
-}
-
-void Edge::global_pheromone_update()
-{
+void Edge::globalPheromoneUpdate() {
     double sum = 0;
-    for (Ant &ant : ants_)
-    {
-        if (ant.path_length() > 0)
-            sum += (double)1 / ant.path_length();
+    for (Ant& ant : ants) {
+        if (ant.getPathLength() > 0)
+            sum += (double) 1 / ant.getPathLength();
     }
-    pheromone_ = (1 - ALPHA) * pheromone_ + sum;
+    pheromone = (1 - ALPHA) * pheromone + sum;
 }
 
-double &Edge::length()
-{
-    return length_;
-}
-const double &Edge::length() const
-{
-    return length_;
+void Edge::clear() {
+    clearPassed();
+    ants.clear();
 }
 
-void Edge::passed()
-{
-    already_passed_++;
-}
-void Edge::clear_passed()
-{
-    already_passed_ = 0;
-}
-void Edge::clear()
-{
-    clear_passed();
-    ants_.clear();
-}
-bool Edge::contains(Ant ant)
-{
-    for (Ant &vecAnt : ants_)
-    {
-        if (ant.index() == vecAnt.index())
-            return true;
-    }
-    return false;
+bool Edge::contains(const Ant& ant) {
+    return std::any_of(
+            ants.begin(),
+            ants.end(),
+            [&ant](const Ant& vecAnt) {
+                return ant.getIndex() == vecAnt.getIndex();
+            }
+    );
 }

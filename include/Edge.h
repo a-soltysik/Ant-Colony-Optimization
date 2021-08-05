@@ -1,41 +1,49 @@
-#ifndef MROWKI_EDGE_H
-#define MROWKI_EDGE_H
+#pragma once
 
 #include "Ant.h"
-#include <vector>
+#include "constants.h"
+#include <cmath>
 
-class Edge
-{
+
+class Edge {
 private:
-    std::vector<Ant> ants_;
-    double eta_;
-    double numerator_;
-    double pheromone_;
-    double length_;
-    int already_passed_ = 0;
-    bool contains(Ant ant);
+    std::vector<Ant> ants;
+    double eta;
+    double numerator;
+    double pheromone;
+    double length;
+    int already_passed = 0;
 
-    void set_numerator();
+    bool contains(const Ant& ant);
+
+    void set_numerator() { numerator = pheromone * std::pow(eta, BETA); }
 
 public:
-    void ant_passed(Ant ant);
+    Edge() = default;
+    ~Edge() = default;
+    Edge& operator=(const Edge& edge) = delete;
+    void antPassed(const Ant& ant);
 
-    double &eta();
+    double getEta() const { return eta; }
+    void setEta(double eta) {this->eta = eta;}
 
-    double &numerator();
+    double getNumerator();
 
-    double &pheromone();
-    const double &pheromone() const;
+    double getPheromone() const { return pheromone; }
 
-    void global_pheromone_update();
-    void pheromone_update();
+    void setPheromone(double pheromone) { this->pheromone = pheromone; }
 
-    double &length();
-    const double &length() const;
+    void globalPheromoneUpdate();
 
-    void passed();
+    void pheromoneUpdate() { pheromone = (1 - RHO) * pheromone + RHO * already_passed * TAU0; }
 
-    void clear_passed();
+    double getLength() const { return length; };
+
+    void setLength(double length) { this->length = length; };
+
+    void passed() { already_passed++; };
+
+    void clearPassed() { already_passed = 0; };
+
     void clear();
 };
-#endif //MROWKI_EDGE_H
