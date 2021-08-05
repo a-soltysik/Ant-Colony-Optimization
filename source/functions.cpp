@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-void readPoints(std::ifstream &read, std::vector<std::vector<Edge>>& edges)
+void readPoints(std::ifstream& read, std::vector<std::vector<Edge>>& edges)
 {
     skip_lines(read, 2);
     std::vector<double> x(CITIES_NUMBER, 0.0);
@@ -57,8 +57,7 @@ std::string path_to_string(const std::vector<size_t>& path)
         if (i < path.size() - 1)
         {
             result += std::to_string(path[i]) + ",";
-        }
-        else
+        } else
         {
             result += std::to_string(path[i]);
         }
@@ -87,7 +86,7 @@ double probability(const Ant& ant, size_t r, size_t s, std::vector<std::vector<E
 
 size_t position(const Ant& ant, size_t r, std::vector<std::vector<Edge>>& edges)
 {
-    double q = (double)(rand() % 10001) / 10000;
+    double q = (double) (rand() % 10001) / 10000;
     double max = 0;
     size_t edge_max;
     if (q <= Q0)
@@ -104,12 +103,11 @@ size_t position(const Ant& ant, size_t r, std::vector<std::vector<Edge>>& edges)
         {
             return edge_max;
         }
-    }
-    else
+    } else
     {
         double sum = 0;
         size_t last;
-        q = (double)(rand() % 10001) / 10000;
+        q = (double) (rand() % 10001) / 10000;
         for (size_t i = 0; i < CITIES_NUMBER; i++)
         {
             if (!ant.isVisited(i))
@@ -138,14 +136,14 @@ bool enoughFiles(uint32_t amount)
     return true;
 }
 
-void skip_lines(std::ifstream &stream, std::size_t lines)
+void skip_lines(std::ifstream& stream, std::size_t lines)
 {
     std::string s;
     for (; lines; --lines)
         std::getline(stream, s);
 }
 
-void setParameters(std::ifstream &read)
+void setParameters(std::ifstream& read)
 {
     skip_lines(read, 1);
     read >> ANTS_NUMBER;
@@ -174,7 +172,7 @@ void setParameters(std::ifstream &read)
     skip_lines(read, 1);
 }
 
-void get_user_input(uint32_t &experiments, bool &numbersOnly, bool &globalUpdate, bool &localUpdate)
+void get_user_input(uint32_t& experiments, bool& numbersOnly, bool& globalUpdate, bool& localUpdate)
 {
     char writeMode;
 

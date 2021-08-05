@@ -6,7 +6,8 @@ Ant::Ant(size_t index) : ant_index(index)
     city_order.reserve(CITIES_NUMBER);
 }
 
-void Ant::setPosition(uint32_t position) {
+void Ant::setPosition(uint32_t position)
+{
     this->position = position;
     visit(position);
 }
