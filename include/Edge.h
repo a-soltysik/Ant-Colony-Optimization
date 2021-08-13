@@ -19,8 +19,10 @@ private:
 
 public:
     Edge() = default;
-    ~Edge() = default;
+    Edge(Edge&&) = default;
+    Edge(const Edge&) = default;
     Edge& operator=(const Edge& edge) = delete;
+    ~Edge() = default;
 
     void antPassed(const Ant& ant);
     double getEta() const { return eta; }

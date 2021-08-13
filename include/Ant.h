@@ -16,8 +16,10 @@ private:
     void visit(size_t position);
 public:
     Ant(size_t index);
-    ~Ant() = default;
+    Ant(Ant&&) = default;
+    Ant(const Ant&) = default;
     Ant& operator=(const Ant& ant) = delete;
+    ~Ant() = default;
 
     std::vector<size_t> getCityOrder() const { return city_order; }
     void extendPath(double length) { path_length += length; };
