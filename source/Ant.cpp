@@ -20,7 +20,7 @@ void Ant::visit(uint32_t position)
 
 bool Ant::hasEnded()
 {
-    for (int i = 0; i < CITIES_NUMBER; ++i)
+    for (size_t i = 0; i < CITIES_NUMBER; ++i)
     {
         if (!is_visited[i])
             return false;
@@ -30,7 +30,7 @@ bool Ant::hasEnded()
 
 void Ant::clear()
 {
-    for (int i = 0; i < CITIES_NUMBER; ++i)
+    for (size_t i = 0; i < CITIES_NUMBER; ++i)
     {
         is_visited[i] = false;
     }

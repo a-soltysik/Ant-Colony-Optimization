@@ -7,13 +7,13 @@
 class Ant
 {
 private:
-    std::size_t position = 0;
-    const std::size_t ant_index;
+    size_t position = 0;
+    const size_t ant_index;
     double path_length = 0;
     std::vector<bool> is_visited;
-    std::vector<std::size_t> city_order;
+    std::vector<size_t> city_order;
 
-    void visit(std::size_t position);
+    void visit(size_t position);
 public:
     Ant(size_t index);
     ~Ant() = default;
