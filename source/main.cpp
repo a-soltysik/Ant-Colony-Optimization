@@ -22,7 +22,7 @@ int main()
     uint32_t experimentsNumber;
     bool isNumbersOnly, isGlobalUpdate, isLocalUpdate;
 
-    get_user_input(experimentsNumber, isNumbersOnly, isGlobalUpdate, isLocalUpdate);
+    getUserInput(experimentsNumber, isNumbersOnly, isGlobalUpdate, isLocalUpdate);
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -97,7 +97,7 @@ int main()
                         if (!isNumbersOnly)
                         {
                             write << "The path of the ant " << ant.getIndex() << ": [";
-                            write << path_to_string(ant.getCityOrder()) << ". ";
+                            write << pathToString(ant.getCityOrder()) << ". ";
                             write << "The length of the path: " << ant.getPathLength() << "\n";
                         } else
                             write << ant.getPathLength() << "\n";
@@ -127,12 +127,12 @@ int main()
         }
 
         write << "\nThe length of the shortest path: " << min << "\n";
-        write << "The shortest path: " << path_to_string(shortestPath) << "\n";
+        write << "The shortest path: " << pathToString(shortestPath) << "\n";
 
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
-        write << "Time: " << time_to_string(duration.count());
+        write << "Time: " << timeToString(duration.count());
         write.close();
     }
     return 0;
