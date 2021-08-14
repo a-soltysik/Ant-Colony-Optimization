@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "FileException.h"
 
 std::random_device Utils::device;
 std::mt19937 Utils::mt(device());
@@ -10,11 +11,11 @@ uint32_t Utils::getRandomUInt(uint32_t from, uint32_t to)
     return randomInt(mt);
 }
 
-std::vector<std::vector<Edge>> Utils::parsePointsToEdges(const std::vector<Point>& points)
+std::vector<std::vector<Edge>> Utils::parsePointsToEdges(const std::vector<Point>& points) noexcept
 {
     std::vector<std::vector<Edge>> edges(
             CITIES_NUMBER,
-            std::vector<Edge>(CITIES_NUMBER, Edge())
+            std::vector<Edge>(CITIES_NUMBER)
     );
     for (size_t i = 0; i < CITIES_NUMBER; ++i)
         for (size_t j = 0; j < CITIES_NUMBER; ++j)
@@ -25,17 +26,18 @@ std::vector<std::vector<Edge>> Utils::parsePointsToEdges(const std::vector<Point
 
 std::vector<Point> Utils::readPoints(std::ifstream& fin)
 {
-    std::vector<Point> points(CITIES_NUMBER, Point());
+    std::vector<Point> points(CITIES_NUMBER);
     skipLines(fin, 2);
     for (size_t i = 0; i < CITIES_NUMBER; ++i)
     {
         fin >> points[i].x >> points[i].y;
         fin.ignore();
+        FILE_THROW_IF_FAILED(fin, "Error during reading point number: " + std::to_string(i));
     }
     return points;
 }
 
-std::string Utils::timeToString(uint64_t microseconds)
+std::string Utils::timeToString(uint64_t microseconds) noexcept
 {
     uint16_t micros = microseconds % 1000;
     microseconds /= 1000;
@@ -66,7 +68,7 @@ std::string Utils::timeToString(uint64_t microseconds)
     return time;
 }
 
-std::string Utils::antsPathToString(const std::vector<size_t>& path)
+std::string Utils::antsPathToString(const std::vector<size_t>& path) noexcept
 {
     std::string result = "[";
     for (size_t i = 0; i < path.size(); i++)
@@ -83,17 +85,17 @@ std::string Utils::antsPathToString(const std::vector<size_t>& path)
     return result;
 }
 
-double Utils::distance(const Point& p1, const Point& p2)
+double Utils::distance(const Point& p1, const Point& p2) noexcept
 {
-    return std::sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+    return std::sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
 }
 
 bool Utils::enoughFiles(uint32_t amount)
 {
     std::fstream file;
-    for (uint32_t i = 1; i <= amount; i++)
+    for (uint32_t i = 0; i < amount; i++)
     {
-        file.open("/in" + std::to_string(i) + ".ant");
+        file.open("in/" + std::to_string(i) + ".ant");
         if (!file.good())
             return false;
         file.close();
@@ -101,11 +103,14 @@ bool Utils::enoughFiles(uint32_t amount)
     return true;
 }
 
-void Utils::skipLines(std::ifstream& stream, std::size_t lines)
+void Utils::skipLines(std::ifstream& fin, std::size_t lines)
 {
     std::string s;
     for (; lines; --lines)
-        std::getline(stream, s);
+    {
+        std::getline(fin, s);
+        FILE_THROW_IF_FAILED(fin, "Error during skipping the lines");
+    }
 }
 
 void Utils::setParameters(std::ifstream& fin)
@@ -113,27 +118,35 @@ void Utils::setParameters(std::ifstream& fin)
     skipLines(fin, 1);
     fin >> ANTS_NUMBER;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading ANTS_NUMBER");
     skipLines(fin, 1);
     fin >> CITIES_NUMBER;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading CITIES_NUMBER");
     skipLines(fin, 1);
     fin >> ITERATION_NUMBER;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading ITERATION_NUMBER");
     skipLines(fin, 1);
     fin >> TAU0;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading TAU0");
     skipLines(fin, 1);
     fin >> ALPHA;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading ALPHA");
     skipLines(fin, 1);
     fin >> BETA;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading BETA");
     skipLines(fin, 1);
     fin >> Q0;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading Q0");
     skipLines(fin, 1);
     fin >> RHO;
     fin.ignore();
+    FILE_THROW_IF_FAILED(fin, "Error during reading RHO");
     skipLines(fin, 1);
 }
 
@@ -168,6 +181,3 @@ std::vector<Point> Utils::collectData(std::ifstream& fin)
     setParameters(fin);
     return readPoints(fin);
 }
-
-
-

@@ -20,12 +20,12 @@ public:
     static double getRandom0to1() { return random(mt); }
     static uint32_t getRandomUInt(uint32_t from, uint32_t to);
     static bool enoughFiles(uint32_t amount);
-    static void skipLines(std::ifstream& stream, std::size_t lines);
+    static void skipLines(std::ifstream& fin, std::size_t lines);
     static void getUserInput();
 
-    static std::vector<std::vector<Edge>> parsePointsToEdges(const std::vector<Point>& points);
-    static std::string timeToString(uint64_t microseconds);
-    static std::string antsPathToString(const std::vector<size_t>& path);
-    static double distance(const Point& p1, const Point& p2);
+    static std::vector<std::vector<Edge>> parsePointsToEdges(const std::vector<Point>& points) noexcept;
+    static std::string timeToString(uint64_t microseconds) noexcept;
+    static std::string antsPathToString(const std::vector<size_t>& path) noexcept;
+    static double distance(const Point& p1, const Point& p2) noexcept;
     static std::vector<Point> collectData(std::ifstream& fin);
 };

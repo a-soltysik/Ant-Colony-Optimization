@@ -15,4 +15,3 @@ extern double ALPHA;
 extern double BETA;
 extern double Q0;
 extern double RHO;
-

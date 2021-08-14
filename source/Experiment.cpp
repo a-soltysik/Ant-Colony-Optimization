@@ -1,7 +1,11 @@
 #include "Experiment.h"
+#include "FileException.h"
 
 void Experiment::run() {
-    fout.open("/out" + std::to_string(index) + ".out");
+    std::string fileName("out/" + std::to_string(index) + ".out");
+    fout.open(fileName);
+    FILE_THROW_IF_FAILED(fout, "Error during opening " + fileName);
+
     start = std::chrono::high_resolution_clock::now();
     prepareEdges();
     prepareAnts();
@@ -48,7 +52,7 @@ void Experiment::moveAnt(Ant& ant) {
 void Experiment::writeData(const Ant& ant) {
     if (!IS_NUMBERS_ONLY)
     {
-        fout << "The path of the ant " << ant.getIndex() << ": [";
+        fout << "The path of the ant " << ant.getIndex() << ": ";
         fout << Utils::antsPathToString(ant.getCityOrder()) << ". ";
         fout << "The length of the path: " << ant.getPathLength() << "\n";
     } else
@@ -196,5 +200,3 @@ size_t Experiment::findBestEdgeBasedOnProbability(const Ant& ant,size_t currentP
     }
     return last;
 }
-
-

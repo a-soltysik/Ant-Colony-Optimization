@@ -10,10 +10,10 @@ private:
     std::vector<std::vector<Edge>> edges;
     std::vector<Ant> ants;
     std::ofstream fout;
-    double shortestPathLength = std::numeric_limits<double>::max();
     std::vector<size_t> shortestPath;
-    uint32_t index;
     std::chrono::time_point<std::chrono::high_resolution_clock> start;
+    double shortestPathLength = std::numeric_limits<double>::max();
+    uint32_t index;
 
     void prepareEdges();
     void prepareAnts();
@@ -42,6 +42,4 @@ public:
     ~Experiment() = default;
 
     void run();
-
-
 };
